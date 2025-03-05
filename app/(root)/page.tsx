@@ -1,37 +1,65 @@
 import Image from "next/image";
 import SearchFormReset from "@/components/SearchFormReset";
+import SearchForm from "@/components/SearchForm";
+import StartupCard from "@/components/StartupCard";
 
-export default function Home() {
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: Promise<{ query?: string }>;
+})
+
+ {
+  const query = (await searchParams).query;
+
+  const posts = [
+    {
+      _createdAt: new Date(),
+      views: 55,
+      author: { _id: 1, name: "John Doe" }, 
+      _id: 1,
+      description: "This is a description",
+      image: 
+        "https://images.unsplash.com/photo-1634912314704-c646c586b131?q=80&w=2940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+      category: "Robots",
+      title: "We Robots",
+    },
+  ];
+  
+
   return (
-    <section
-      className="w-full min-h-[530px] flex justify-center items-center flex-col"
-      style={{
-        backgroundColor: "#EE2B69", // Hot pink background
-        backgroundImage: "linear-gradient(to right, transparent 49.5%, rgba(251, 232, 67, 0.2) 49.5%, rgba(251, 232, 67, 0.6) 50.5%, transparent 50.5%)",
-        backgroundSize: "5% 100%",
-        backgroundPosition: "center",
-        backgroundRepeat: "repeat-x",
-      }}
-    >
-      {/* Centered content with exact matching to screenshot */}
-      <div className="flex flex-col items-center justify-center px-6 py-10 w-full max-w-xl mx-auto">
-        {/* Black background heading with centered white text */}
-        <div className="bg-black text-white px-6 py-3 w-full text-center mb-4">
-          <h1 className="font-extrabold text-3xl leading-tight">
-            PITCH YOUR STARTUP,<br />
-            CONNECT WITH<br />
-            ENTREPRENEURS
-          </h1>
-        </div>
-        
-        {/* Subtitle with exact text color and spacing */}
-        <p className="text-white text-lg font-medium text-center mb-8 w-full">
-          Submit Ideas, Vote on Pitches, and Get Noticed in Virtual Competitions.
-        </p>
-        
-        {/* Search component */}
-        <SearchFormReset />
-      </div>
+    <>
+    <section className="pink_container">
+      <h1 className="heading">
+        Pitch Your Startup, <br />
+        Connect With Entrepreneurs
+      </h1>
+
+      <p className="sub-heading !max-w-3xl">
+        Submit Ideas, Vote on Pitches, and Get Noticed in Virtual Competitions.
+      </p>
+
+      <SearchForm query={query} />
     </section>
+
+    <section className="section_container">
+        <p className="text-30-semibold">
+          {query ? `Search results for "${query}"` : "All Startups"}
+        </p>
+
+        <ul className="mt-7 card_grid">
+          {posts?.length > 0 ? (
+            posts.map((post: StartupTypeCard) => (
+              <StartupCard key={post?._id} post={post} />
+            ))
+          ) : (
+            <p className="no-results">No startups found</p>
+          )}
+        </ul>
+        
+      </section>
+
+    </>
   );
+
 }
