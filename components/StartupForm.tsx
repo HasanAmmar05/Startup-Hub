@@ -6,9 +6,10 @@ import { Send } from 'lucide-react';
 import { formSchema } from "@/lib/validation";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
-// import { createPitch } from "@/lib/actions";
+import { createPitch } from "@/lib/actions";
 
 // Simple toast implementation to replace shadcn's useToast
+
 const Toast = ({ title, description, variant = "default", onClose }: { 
   title: string; 
   description: string; 
@@ -84,16 +85,16 @@ const StartupForm = () => {
       await formSchema.parseAsync(formValues);
       
 
-      // Commented out for demo purposes
-      // const result = await createPitch(prevState, formData, pitch);
-      // if (result.status == "SUCCESS") {
-      //   toast({
-      //     title: "Success",
-      //     description: "Your startup pitch has been created successfully",
-      //   });
-      //   router.push(`/startup/${result._id}`);
-      // }
-      // return result;
+      
+      const result = await createPitch(prevState, formData, pitch);
+        if (result.status == "SUCCESS") {
+          toast({
+            title: "Success",
+            description: "Your startup pitch has been created successfully",
+          });
+          router.push(`/startup/${result._id}`);
+      }
+      return result;
 
 
     } catch (error) {
@@ -132,7 +133,7 @@ const StartupForm = () => {
       <ToastContainer />
       <form action={formAction} className="startup-form">
         <div className="form-group">
-          <label htmlFor="title" className="startup-form_label">
+          <label htmlFor="title" className="text-26-semibold line-clamp-1">
             TITLE
           </label>
           <input
@@ -147,7 +148,7 @@ const StartupForm = () => {
         </div>
 
         <div className="form-group">
-          <label htmlFor="description" className="startup-form_label">
+          <label htmlFor="description" className="text-26-semibold line-clamp-1">
             DESCRIPTION
           </label>
           <textarea
@@ -165,7 +166,7 @@ const StartupForm = () => {
         </div>
 
         <div className="form-group">
-          <label htmlFor="category" className="startup-form_label">
+          <label htmlFor="category" className="text-26-semibold line-clamp-1">
             CATEGORY
           </label>
           <input
@@ -182,7 +183,7 @@ const StartupForm = () => {
         </div>
 
         <div className="form-group">
-          <label htmlFor="link" className="startup-form_label">
+          <label htmlFor="link" className="text-26-semibold line-clamp-1">
             IMAGE URL
           </label>
           <input
@@ -197,7 +198,7 @@ const StartupForm = () => {
         </div>
 
         <div className="form-group" data-color-mode="light">
-          <label htmlFor="pitch" className="startup-form_label">
+          <label htmlFor="pitch" className="text-26-semibold line-clamp-1">
             PITCH
           </label>
           <MDEditor
