@@ -1,13 +1,13 @@
 import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { BadgePlus, LogOut } from "lucide-react";
+import { BadgePlus, LogOut, User } from "lucide-react";
 // import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { auth, signOut, signIn  } from '@/auth'
+import { auth, signOut, signIn } from '@/auth'
 
-const Navbar =  async () => {
-
+const Navbar = async () => {
     const session = await auth()
+    
     return (
         <header className="px-5 py-3 bg-white shadow-sm font-work-sans">
           <nav className="flex justify-between items-center">
@@ -16,9 +16,15 @@ const Navbar =  async () => {
             </Link>
     
             <div className="flex items-center gap-5 text-black">
-              {session && session?.user ? ( // If session exists and has a user (authenticated user), 
-              // it shows "Create" and "Logout" options.
+              {session && session?.user ? (
                 <>
+                  <div className="flex items-center gap-2">
+                    <User className="size-4" />
+                    <span className="max-sm:hidden">
+                      {session.user.name || 'User'}
+                    </span>
+                  </div>
+
                   <Link href="/startup/create">
                     <span className="max-sm:hidden">Create</span>
                     <BadgePlus className="size-6 sm:hidden" />
@@ -38,11 +44,7 @@ const Navbar =  async () => {
                   </form>
     
                 </>
-              ) /* End of code for the Logged in user */ 
-              
-              // Code for the Un-logged in user 
-
-              : (
+              ) : (
                 <form
                   action={async () => {
                     "use server";

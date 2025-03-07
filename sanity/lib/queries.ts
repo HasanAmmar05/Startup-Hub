@@ -15,8 +15,7 @@ export const STARTUPS_QUERY =
   image,
 }`);
 
-export const STARTUP_BY_ID_QUERY =
-  defineQuery(`*[_type == "startup" && _id == $id][0]{
+export const STARTUP_BY_ID_QUERY = `*[_type == "startup" && _id == $id][0]{
   _id, 
   title, 
   slug,
@@ -29,7 +28,7 @@ export const STARTUP_BY_ID_QUERY =
   category,
   image,
   pitch,
-}`);
+}`
 
 export const STARTUP_VIEWS_QUERY = defineQuery(`
     *[_type == "startup" && _id == $id][0]{
@@ -76,8 +75,7 @@ export const STARTUPS_BY_AUTHOR_QUERY =
   image,
 }`);
 
-export const PLAYLIST_BY_SLUG_QUERY =
-  defineQuery(`*[_type == "playlist" && slug.current == $slug][0]{
+export const PLAYLIST_BY_SLUG_QUERY = `*[_type == "playlist" && slug.current == $slug][0]{
   _id,
   title,
   slug,
@@ -99,4 +97,4 @@ export const PLAYLIST_BY_SLUG_QUERY =
     image,
     pitch
   }
-}`);
+}`
