@@ -2,7 +2,7 @@
 
 import React, { useState, useActionState } from "react";
 import MDEditor from "@uiw/react-md-editor";
-import { Send } from 'lucide-react';
+import { Send } from "lucide-react";
 import { formSchema } from "@/lib/validation";
 import { z } from "zod";
 import { useRouter } from "next/navigation";
@@ -10,17 +10,26 @@ import { createPitch } from "@/lib/actions";
 
 // Simple toast implementation to replace shadcn's useToast
 
-const Toast = ({ title, description, variant = "default", onClose }: { 
-  title: string; 
-  description: string; 
-  variant?: "default" | "destructive"; 
+const Toast = ({
+  title,
+  description,
+  variant = "default",
+  onClose,
+}: {
+  title: string;
+  description: string;
+  variant?: "default" | "destructive";
   onClose: () => void;
 }) => {
   return (
-    <div className={`toast ${variant === "destructive" ? "toast-error" : "toast-default"}`}>
+    <div
+      className={`toast ${variant === "destructive" ? "toast-error" : "toast-default"}`}
+    >
       <div className="toast-header">
         <strong>{title}</strong>
-        <button onClick={onClose} className="toast-close">×</button>
+        <button onClick={onClose} className="toast-close">
+          ×
+        </button>
       </div>
       <div className="toast-body">{description}</div>
     </div>
@@ -29,35 +38,43 @@ const Toast = ({ title, description, variant = "default", onClose }: {
 
 // Custom toast hook
 const useCustomToast = () => {
-  const [toasts, setToasts] = useState<Array<{
-    id: string;
+  const [toasts, setToasts] = useState<
+    Array<{
+      id: string;
+      title: string;
+      description: string;
+      variant?: "default" | "destructive";
+    }>
+  >([]);
+
+  const toast = ({
+    title,
+    description,
+    variant = "default",
+  }: {
     title: string;
     description: string;
     variant?: "default" | "destructive";
-  }>>([]);
-
-  const toast = ({ title, description, variant = "default" }: { 
-    title: string; 
-    description: string; 
-    variant?: "default" | "destructive";
   }) => {
     const id = Math.random().toString(36).substring(2, 9);
-    setToasts(prev => [...prev, { id, title, description, variant }]);
-    
+    setToasts((prev) => [...prev, { id, title, description, variant }]);
+
     setTimeout(() => {
-      setToasts(prev => prev.filter(t => t.id !== id));
+      setToasts((prev) => prev.filter((t) => t.id !== id));
     }, 5000);
   };
 
   const ToastContainer = () => (
     <div className="toast-container">
-      {toasts.map(t => (
-        <Toast 
-          key={t.id} 
-          title={t.title} 
-          description={t.description} 
-          variant={t.variant} 
-          onClose={() => setToasts(prev => prev.filter(toast => toast.id !== t.id))}
+      {toasts.map((t) => (
+        <Toast
+          key={t.id}
+          title={t.title}
+          description={t.description}
+          variant={t.variant}
+          onClose={() =>
+            setToasts((prev) => prev.filter((toast) => toast.id !== t.id))
+          }
         />
       ))}
     </div>
@@ -65,6 +82,16 @@ const useCustomToast = () => {
 
   return { toast, ToastContainer };
 };
+
+const CATEGORIES = [
+  "Technology",
+  "Health",
+  "Education",
+  "Finance",
+  "Travel",
+  "Food",
+  "Other",
+] as const;
 
 const StartupForm = () => {
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -83,20 +110,20 @@ const StartupForm = () => {
       };
 
       await formSchema.parseAsync(formValues);
-      
 
-      
       const result = await createPitch(prevState, formData, pitch);
-        if (result.status == "SUCCESS") {
-          toast({
-            title: "Success",
-            description: "Your startup pitch has been created successfully",
-          });
-          router.push(`/startup/${result._id}`);
+
+      if (result.status === "SUCCESS") {
+        toast({
+          title: "Success",
+          description: "Your startup pitch has been created successfully",
+        });
+
+        // Force router refresh before navigation
+        router.refresh();
+        router.push(`/startup/${result._id}`);
       }
       return result;
-
-
     } catch (error) {
       if (error instanceof z.ZodError) {
         const fieldErorrs = error.flatten().fieldErrors;
@@ -148,7 +175,10 @@ const StartupForm = () => {
         </div>
 
         <div className="form-group">
-          <label htmlFor="description" className="text-26-semibold line-clamp-1">
+          <label
+            htmlFor="description"
+            className="text-26-semibold line-clamp-1"
+          >
             DESCRIPTION
           </label>
           <textarea
@@ -161,7 +191,9 @@ const StartupForm = () => {
             suppressHydrationWarning
           />
           {errors.description && (
-            <p className="startup-form_error">String must contain at least 20 character(s)</p>
+            <p className="startup-form_error">
+              String must contain at least 20 character(s)
+            </p>
           )}
         </div>
 
@@ -169,14 +201,20 @@ const StartupForm = () => {
           <label htmlFor="category" className="text-26-semibold line-clamp-1">
             CATEGORY
           </label>
-          <input
+          <select
             id="category"
             name="category"
             className="startup-form_input"
             required
-            placeholder="Startup Category (Tech, Health, Education...)"
             suppressHydrationWarning
-          />
+          >
+            <option value="">Select a category</option>
+            {CATEGORIES.map((category) => (
+              <option key={category} value={category}>
+                {category}
+              </option>
+            ))}
+          </select>
           {errors.category && (
             <p className="startup-form_error">{errors.category}</p>
           )}
@@ -209,7 +247,8 @@ const StartupForm = () => {
             height={300}
             style={{ borderRadius: 20, overflow: "hidden" }}
             textareaProps={{
-              placeholder: "Briefly describe your idea and what problem it solves",
+              placeholder:
+                "Briefly describe your idea and what problem it solves",
               suppressHydrationWarning: true,
             }}
             previewOptions={{

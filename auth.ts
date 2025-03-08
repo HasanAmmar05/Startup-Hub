@@ -3,49 +3,49 @@ import GitHub from "next-auth/providers/github";
 import { AUTHOR_BY_GITHUB_ID_QUERY } from "@/sanity/lib/queries";
 import { client } from "@/sanity/lib/client";
 import { writeClient } from "@/sanity/lib/write-client";
-import { profile } from "console";
 
-export const { handlers, auth, signIn, signOut } = NextAuth({
-  providers: [GitHub],
+export const { auth, signIn, signOut } = NextAuth({
+  providers: [
+    GitHub({
+      clientId: process.env.GITHUB_CLIENT_ID!,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET!,
+    }),
+  ],
   callbacks: {
-    async signIn({
-      user: {name, email, image},
-      account ,
-      profile: {id, login, bio},
-    }) {
-      const existingUser = await client.fetch(AUTHOR_BY_GITHUB_ID_QUERY, { 
-        id });
-
+    async signIn({ user: { name, email, image }, account, profile }) {
+      const existingUser = await client.fetch(AUTHOR_BY_GITHUB_ID_QUERY, {
+        id: profile?.id
+      });
       if (!existingUser) {
+        // Create new author in Sanity
         await writeClient.create({
           _type: "author",
-          id: id,
+          _id: `author-${profile?.id}`, // Add this line to set explicit _id
+          githubId: profile?.id, // Add this to link with GitHub ID
           name: name,
-          username: login,
+          username: profile?.login,
           email: email,
           image: image,
-          bio: bio || "",
+          bio: profile?.bio ?? ""
         });
       }
-
       return true;
     },
     async jwt({ token, account, profile }) {
       if (account && profile) {
-        const user = await client
-          .withConfig({ useCdn: false })
-          .fetch(AUTHOR_BY_GITHUB_ID_QUERY, {
-            id: profile?.id,
-          });
-
-        token.id = user?._id;
+        // Query user by GitHub ID instead of profile.id
+        const user = await client.fetch(AUTHOR_BY_GITHUB_ID_QUERY, {
+          id: profile.id
+        });
+        token.id = user?._id; // Store Sanity document _id
       }
-
       return token;
     },
     async session({ session, token }) {
-      Object.assign(session, { id: token.id });
+      if (token?.id) {
+        session.user.id = token.id;
+      }
       return session;
-    },
-  },
+    }
+  }
 });

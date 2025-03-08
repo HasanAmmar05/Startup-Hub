@@ -5,55 +5,31 @@ import { parseServerActionResponse } from "@/lib/utils";
 import slugify from "slugify";
 import { writeClient } from "@/sanity/lib/write-client";
 
-export const createPitch = async (
-  state: any,
-  form: FormData,
-  pitch: string,
-) => {
-  const session = await auth();
-
-  if (!session)
-    return parseServerActionResponse({
-      error: "Not signed in",
-      status: "ERROR",
-    });
-
-  const { title, description, category, link } = Object.fromEntries(
-    Array.from(form).filter(([key]) => key !== "pitch"),
-  );
-
-  const slug = slugify(title as string, { lower: true, strict: true });
-
+export async function createPitch(prevState: any, formData: FormData, pitch: string) {
   try {
-    const startup = {
-      title,
-      description,
-      category,
-      image: link,
-      slug: {
-        _type: slug,
-        current: slug,
-      },
+    const session = await auth();
+    
+    if (!session?.user?.id) {
+      throw new Error("User not authenticated");
+    }
+
+    const pitchData = {
+      _type: "startup",
+      title: formData.get("title"),
+      description: formData.get("description"),
+      category: formData.get("category"), // Now directly using the string value
+      image: formData.get("link"),
+      pitch: pitch,
       author: {
         _type: "reference",
-        _ref: session?.id,
-      },
-      pitch,
+        _ref: session.user.id
+      }
     };
 
-    const result = await writeClient.create({ _type: "startup", ...startup });
-
-    return parseServerActionResponse({
-      ...result,
-      error: "",
-      status: "SUCCESS",
-    });
+    const response = await writeClient.create(pitchData);
+    return { ...prevState, status: "SUCCESS", _id: response._id };
   } catch (error) {
-    console.log(error);
-
-    return parseServerActionResponse({
-      error: JSON.stringify(error),
-      status: "ERROR",
-    });
+    console.error("Error creating pitch:", error);
+    return { ...prevState, status: "ERROR", error: "Failed to create pitch" };
   }
-};
+}
