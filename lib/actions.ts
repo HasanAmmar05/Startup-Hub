@@ -1,35 +1,54 @@
 "use server";
 
 import { auth } from "@/auth";
-import { parseServerActionResponse } from "@/lib/utils";
-import slugify from "slugify";
 import { writeClient } from "@/sanity/lib/write-client";
+import { revalidatePath } from "next/cache";
 
-export async function createPitch(prevState: any, formData: FormData, pitch: string) {
+export async function createPitch(
+  prevState: any,
+  formData: FormData,
+  pitch: string
+) {
   try {
     const session = await auth();
-    
+
     if (!session?.user?.id) {
-      throw new Error("User not authenticated");
+      console.error("No user ID in session");
+      return {
+        status: "ERROR",
+        message: "Authentication required",
+      };
     }
 
     const pitchData = {
       _type: "startup",
       title: formData.get("title"),
       description: formData.get("description"),
-      category: formData.get("category"), // Now directly using the string value
+      category: formData.get("category"),
       image: formData.get("link"),
       pitch: pitch,
       author: {
         _type: "reference",
-        _ref: session.user.id
-      }
+        _ref: session.user.id,
+      },
+      _createdAt: new Date().toISOString(),
     };
 
     const response = await writeClient.create(pitchData);
-    return { ...prevState, status: "SUCCESS", _id: response._id };
+
+    // Revalidate the home page and user profile
+    revalidatePath("/");
+    revalidatePath(`/user/${session.user.id}`);
+
+    return {
+      status: "SUCCESS",
+      _id: response._id,
+    };
   } catch (error) {
     console.error("Error creating pitch:", error);
-    return { ...prevState, status: "ERROR", error: "Failed to create pitch" };
+    return {
+      status: "ERROR",
+      message: "Failed to create pitch",
+    };
   }
 }
