@@ -3,6 +3,7 @@
 import { auth } from "@/auth";
 import { writeClient } from "@/sanity/lib/write-client";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 export async function createPitch(
   prevState: any,
@@ -13,7 +14,6 @@ export async function createPitch(
     const session = await auth();
 
     if (!session?.user?.id) {
-      console.error("No user ID in session");
       return {
         status: "ERROR",
         message: "Authentication required",
@@ -31,12 +31,11 @@ export async function createPitch(
         _type: "reference",
         _ref: session.user.id,
       },
-      _createdAt: new Date().toISOString(),
     };
 
     const response = await writeClient.create(pitchData);
 
-    // Revalidate the home page and user profile
+    // Revalidate relevant paths
     revalidatePath("/");
     revalidatePath(`/user/${session.user.id}`);
 
@@ -48,7 +47,8 @@ export async function createPitch(
     console.error("Error creating pitch:", error);
     return {
       status: "ERROR",
-      message: "Failed to create pitch",
+      message:
+        error instanceof Error ? error.message : "Failed to create pitch",
     };
   }
 }
