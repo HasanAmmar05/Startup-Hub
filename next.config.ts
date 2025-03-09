@@ -5,12 +5,20 @@ const nextConfig: NextConfig = {
   /* config options here */
 
   images: {
+    domains: [
+      'cdn.sanity.io',
+      'avatars.githubusercontent.com',
+      'images.unsplash.com',
+    ],
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: '*',
+        hostname: '**',
       },
     ],
+    dangerouslyAllowSVG: true,
+    contentDispositionType: 'attachment',
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
 
   // experimental: {

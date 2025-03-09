@@ -1,15 +1,23 @@
+"use client";
+
 import { cn, formatDate } from "@/lib/utils";
 import { EyeIcon } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Author, Startup } from "@/sanity/types";
 import { Skeleton } from "@/components/ui/skeleton";
 import StartupImage from "@/components/StartupImage";
+import AuthorImage from "@/components/AuthorImage";
 
 export type StartupTypeCard = Omit<Startup, "author"> & { author?: Author };
 
-const StartupCard = ({ post }: { post: StartupTypeCard }) => {
+const StartupCard = ({
+  post,
+  currentUserId,
+}: {
+  post: StartupTypeCard;
+  currentUserId?: string;
+}) => {
   if (!post) return null;
 
   const {
@@ -23,6 +31,10 @@ const StartupCard = ({ post }: { post: StartupTypeCard }) => {
     description = "No description available",
   } = post;
 
+  // Debug image URLs
+  console.log(`StartupCard - ${title} - Image:`, image);
+  console.log(`StartupCard - ${title} - Author:`, author);
+
   const formattedDate = _createdAt ? formatDate(_createdAt) : "Invalid Date";
 
   return (
@@ -31,7 +43,7 @@ const StartupCard = ({ post }: { post: StartupTypeCard }) => {
         <p className="startup-card_date">{formattedDate}</p>
         <div className="flex gap-1.5">
           <EyeIcon className="size-6 text-primary" />
-          <span className="text-16-medium">{views}</span>
+          <span className="text-sm font-medium">{views}</span>
         </div>
       </div>
 
@@ -39,53 +51,43 @@ const StartupCard = ({ post }: { post: StartupTypeCard }) => {
         <div className="flex-1">
           {author?._id && (
             <Link href={`/user/${author._id}`}>
-              <p className="text-16-medium line-clamp-1">
+              <p className="text-base font-medium line-clamp-1">
                 {author?.name || "Unknown Author"}
               </p>
             </Link>
           )}
           <Link href={`/startup/${_id}`}>
-            <h3 className="text-26-semibold line-clamp-1">{title}</h3>
+            <h3 className="text-2xl font-semibold line-clamp-1">{title}</h3>
           </Link>
         </div>
         {author?._id && (
           <Link href={`/user/${author._id}`}>
-            {author?.image ? (
-              <Image
-                src={author.image || "/placeholder.svg"}
+            <div className="relative w-12 h-12 rounded-full overflow-hidden border border-gray-200 dark:border-gray-700">
+              <AuthorImage
+                src={author.image || ""}
                 alt={author.name || "Author"}
-                width={48}
-                height={48}
-                className="rounded-full"
+                fallbackInitial={author?.name?.charAt(0) || "U"}
               />
-            ) : (
-              <div className="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center">
-                {author?.name?.charAt(0) || "U"}
-              </div>
-            )}
+            </div>
           </Link>
         )}
       </div>
 
       <Link href={`/startup/${_id}`}>
         <p className="startup-card_desc">{description}</p>
-        {image ? (
+        <div className="startup-card_img">
           <StartupImage
-            src={image || "/placeholder.svg"}
+            src={image || ""}
             alt={title}
-            className="startup-card_img"
+            className="w-full h-[200px]"
           />
-        ) : (
-          <div className="startup-card_img bg-gray-100 flex items-center justify-center">
-            <span className="text-gray-400">No image available</span>
-          </div>
-        )}
+        </div>
       </Link>
 
       <div className="flex-between gap-3 mt-5">
         {category && (
           <Link href={`/?query=${category.toLowerCase()}`}>
-            <p className="text-16-medium">{category}</p>
+            <p className="text-base font-medium">{category}</p>
           </Link>
         )}
         <Button className="startup-card_btn" asChild>

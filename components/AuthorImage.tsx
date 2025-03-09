@@ -3,35 +3,41 @@
 import { useState } from "react";
 import Image from "next/image";
 
-interface StartupImageProps {
+interface AuthorImageProps {
   src: string;
   alt: string;
+  fallbackInitial?: string;
   className?: string;
 }
 
-const StartupImage = ({ src, alt, className = "" }: StartupImageProps) => {
+const AuthorImage = ({
+  src,
+  alt,
+  fallbackInitial = "U",
+  className = "",
+}: AuthorImageProps) => {
   const [error, setError] = useState(false);
 
   // Debug
-  console.log(`StartupImage - Received src:`, src);
+  console.log(`AuthorImage - Received src:`, src);
 
   if (error || !src) {
     return (
       <div
-        className={`flex items-center justify-center w-full h-full bg-gray-100 text-gray-400 ${className}`}
+        className={`flex items-center justify-center w-full h-full rounded-full bg-gray-200 text-gray-600 font-semibold text-lg ${className}`}
       >
-        No image available
+        {fallbackInitial}
       </div>
     );
   }
 
   return (
-    <div className={`relative ${className}`}>
+    <div className={`relative w-full h-full ${className}`}>
       <Image
         src={src}
         alt={alt}
         fill
-        className="object-cover"
+        className="object-cover rounded-full"
         onError={(e) => {
           console.error(`Failed to load image: ${src}`, e);
           setError(true);
@@ -42,4 +48,4 @@ const StartupImage = ({ src, alt, className = "" }: StartupImageProps) => {
   );
 };
 
-export default StartupImage;
+export default AuthorImage;

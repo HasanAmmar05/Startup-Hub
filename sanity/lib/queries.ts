@@ -10,12 +10,12 @@ export const STARTUPS_QUERY = defineQuery(`*[_type == "startup" && (
   title,
   description,
   _createdAt,
-  image,
-  category,
+  "image": image.asset->url,
+  "category": category->name,
   "author": author->{
     _id,
     name,
-    image,
+    "image": image.asset->url,
     bio
   },
   views
@@ -26,14 +26,14 @@ export const STARTUP_BY_ID_QUERY = `*[_type == "startup" && _id == $id][0]{
   title,
   description,
   _createdAt,
-  image,
-  category,
+  "image": image.asset->url,
+  "category": category->name,
   pitch,
   views,
   "author": author->{
     _id,
     name,
-    image,
+    "image": image.asset->url,
     bio
   }
 }`;
@@ -51,7 +51,7 @@ export const AUTHOR_BY_GITHUB_ID_QUERY = defineQuery(`
     name,
     username,
     email,
-    image,
+    "image": image.asset->url,
     bio
 }
 `);
@@ -63,7 +63,7 @@ export const AUTHOR_BY_ID_QUERY = defineQuery(`
     name,
     username,
     email,
-    image,
+    "image": image.asset->url,
     bio
 }
 `);
@@ -75,12 +75,36 @@ export const STARTUPS_BY_AUTHOR_QUERY =
   slug,
   _createdAt,
   author -> {
-    _id, name, image, bio
+    _id, 
+    name, 
+    "image": image.asset->url,
+    bio
   }, 
   views,
   description,
-  category,
-  image,
+  "category": category->name,
+  "image": image.asset->url,
+}`);
+
+export const EDITOR_PICKS_QUERY = defineQuery(`*[_type == "playlist" && slug.current == "editor-picks"][0]{
+  _id,
+  title,
+  slug,
+  select[]->{
+    _id,
+    _createdAt,
+    title,
+    description,
+    "image": image.asset->url,
+    "category": category->name,
+    views,
+    "author": author->{
+      _id,
+      name,
+      "image": image.asset->url,
+      bio
+    }
+  }
 }`);
 
 export const PLAYLIST_BY_SLUG_QUERY = `*[_type == "playlist" && slug.current == $slug][0]{
@@ -91,18 +115,15 @@ export const PLAYLIST_BY_SLUG_QUERY = `*[_type == "playlist" && slug.current == 
     _id,
     _createdAt,
     title,
-    slug,
-    author->{
+    description,
+    "image": image.asset->url,
+    "category": category->name,
+    views,
+    "author": author->{
       _id,
       name,
-      slug,
-      image,
+      "image": image.asset->url,
       bio
-    },
-    views,
-    description,
-    category,
-    image,
-    pitch
+    }
   }
 }`;
