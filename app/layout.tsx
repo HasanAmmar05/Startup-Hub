@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import Script from "next/script"; // Import Script for Tailwind CDN
+import "easymde/dist/easymde.min.css";
+import { Toaster } from "@/components/ui/sonner";
 
 const workSans = localFont({
   src: [
@@ -66,19 +67,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <head>
-        <link
-          href="https://cdn.jsdelivr.net/npm/tailwindcss@4.0/dist/tailwind.min.css"
-          rel="stylesheet"
-        />
-        <Script
-          src="https://cdn.tailwindcss.com"
-          strategy="beforeInteractive" // Loads Tailwind before any JavaScript
-        />
-      </head>
-      <body className={`${workSans.variable} antialiased`}>
+      <body className={workSans.variable}>
         {children}
-        {/* <Toaster /> */}
+        <Toaster />
       </body>
     </html>
   );

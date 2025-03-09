@@ -1,37 +1,130 @@
-import Image from "next/image";
-import SearchFormReset from "@/components/SearchFormReset";
+import SearchForm from "@/components/SearchForm";
+import StartupCard, { StartupTypeCard } from "@/components/StartupCard";
+import { auth } from "@/auth";
+import Link from "next/link";
+import { client } from "@/sanity/lib/client";
 
-export default function Home() {
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: Promise<{ query?: string }>;
+}) {
+  const query = (await searchParams).query;
+  const session = await auth();
+
+  console.log("session id :" + session?.id);
+
+  // Use direct query like in UserStartups
+  const posts = await client.fetch(
+    `*[_type == "startup" && (
+      !defined($search) || 
+      title match "*" + $search + "*" || 
+      category match "*" + $search + "*" ||
+      author->name match "*" + $search + "*"
+    )] | order(_createdAt desc) {
+      _id,
+      _createdAt,
+      title,
+      description,
+      views,
+      image,
+      category,
+      "author": author->{
+        _id,
+        name,
+        image
+      }
+    }`,
+    { search: query || null }
+  );
+
+  console.log("Fetched posts:", JSON.stringify(posts.slice(0, 1), null, 2));
+
+  // Fetch editor picks with direct query
+  const editorPicksData = await client.fetch(
+    `*[_type == "playlist" && slug.current == "editor-picks"][0]{
+      _id,
+      title,
+      slug,
+      select[]->{
+        _id,
+        _createdAt,
+        title,
+        description,
+        image,
+        category,
+        views,
+        "author": author->{
+          _id,
+          name,
+          image
+        }
+      }
+    }`
+  );
+
+  const editorPicks = editorPicksData?.select || [];
+  console.log(
+    "Fetched editor picks:",
+    JSON.stringify(editorPicks.slice(0, 1), null, 2)
+  );
+
   return (
-    <section
-      className="w-full min-h-[530px] flex justify-center items-center flex-col"
-      style={{
-        backgroundColor: "#EE2B69", // Hot pink background
-        backgroundImage: "linear-gradient(to right, transparent 49.5%, rgba(251, 232, 67, 0.2) 49.5%, rgba(251, 232, 67, 0.6) 50.5%, transparent 50.5%)",
-        backgroundSize: "5% 100%",
-        backgroundPosition: "center",
-        backgroundRepeat: "repeat-x",
-      }}
-    >
-      {/* Centered content with exact matching to screenshot */}
-      <div className="flex flex-col items-center justify-center px-6 py-10 w-full max-w-xl mx-auto">
-        {/* Black background heading with centered white text */}
-        <div className="bg-black text-white px-6 py-3 w-full text-center mb-4">
-          <h1 className="font-extrabold text-3xl leading-tight">
-            PITCH YOUR STARTUP,<br />
-            CONNECT WITH<br />
-            ENTREPRENEURS
-          </h1>
-        </div>
-        
-        {/* Subtitle with exact text color and spacing */}
-        <p className="text-white text-lg font-medium text-center mb-8 w-full">
-          Submit Ideas, Vote on Pitches, and Get Noticed in Virtual Competitions.
+    <>
+      <section className="pink_container">
+        <h1 className="heading">
+          Pitch Your Startup, <br />
+          Connect With Entrepreneurs
+        </h1>
+
+        <p className="sub-heading !max-w-3xl">
+          Submit Ideas, Vote on Pitches, and Get Noticed in Virtual
+          Competitions.
         </p>
-        
-        {/* Search component */}
-        <SearchFormReset />
-      </div>
-    </section>
+
+        <SearchForm query={query} />
+      </section>
+
+      {/* Editor Picks Section */}
+      {editorPicks.length > 0 && !query && (
+        <section className="section_container">
+          <div className="flex items-center justify-between">
+            <p className="text-30-semibold">Editor Picks</p>
+            <Link href="/editor-picks" className="text-primary hover:underline">
+              View All
+            </Link>
+          </div>
+          <ul className="mt-7 card_grid">
+            {editorPicks.slice(0, 3).map((post: StartupTypeCard) => (
+              <StartupCard
+                key={post?._id}
+                post={post}
+                currentUserId={session?.user?.id}
+              />
+            ))}
+          </ul>
+        </section>
+      )}
+
+      <section className="section_container">
+        <p className="text-30-semibold">
+          {query ? `Search results for "${query}"` : "All Startups"}
+        </p>
+
+        <ul className="mt-7 card_grid">
+          {posts?.length > 0 ? (
+            posts.map((post: StartupTypeCard) => (
+              <StartupCard
+                key={post?._id}
+                post={post}
+                currentUserId={session?.user?.id}
+              />
+            ))
+          ) : (
+            <p className="no-results">No startups found</p>
+          )}
+        </ul>
+      </section>
+    </>
   );
 }
