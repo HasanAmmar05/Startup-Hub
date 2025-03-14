@@ -1,8 +1,9 @@
 # 🚀 StartupHub: Connect, Pitch, and Grow
 
-## 🎥 Demo
+## 🎥 Live Website
 
-https://raw.githubusercontent.com/HasanAmmar05/Startup-Hub/main/Yc-Directory-Pitch.mp4
+
+
 ## 🌟 Overview
 
 StartupHub is a dynamic platform where entrepreneurs can showcase their startups, connect with like-minded innovators, and get discovered by potential investors. Built with Next.js 14, Sanity CMS, and TypeScript, this full-stack application offers a seamless experience for startup founders to pitch their ideas and gain visibility.
