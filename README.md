@@ -1,6 +1,6 @@
 # 🚀 StartupHub: Connect, Pitch, and Grow
 
-https://github.com/HasanAmmar05/Startup-Hub/raw/main/Yc-Directory-Pitch.mp4
+https://github.com/HasanAmmar05/Startup-Hub/main/Yc-Directory-Pitch.mp4
 
 ## 🌟 Overview
 
