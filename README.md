@@ -6,7 +6,7 @@ https://nextjs-full-stack-app-9bi4-60jowrpqp-hasanammar05s-projects.vercel.app/
 
 ## 🌟 Overview
 
-StartupHub is a dynamic platform where entrepreneurs can showcase their startups, connect with like-minded innovators, and get discovered by potential investors. Built with Next.js 14, Sanity CMS, and TypeScript, this full-stack application offers a seamless experience for startup founders to pitch their ideas and gain visibility.
+StartupHub is a dynamic platform where entrepreneurs can showcase their startups, connect with like-minded innovators, and get discovered by potential investors. Built with Next.js 15, Sanity CMS, and TypeScript, this full-stack application offers a seamless experience for startup founders to pitch their ideas and gain visibility.
 
 ## ✨ Features
 
