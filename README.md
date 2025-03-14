@@ -28,6 +28,7 @@ StartupHub is a dynamic platform where entrepreneurs can showcase their startups
 - **🌓 Dark/Light Mode**: Comfortable browsing experience in any lighting
 - **📱 Responsive Design**: Perfect experience across all devices
 - **⚡ Real-time Updates**: See new startups and changes instantly
+- **🐛 Error Tracking**: Integrated Sentry for real-time bug reporting and monitoring
 
 ## 🛠️ Tech Stack
 
@@ -136,7 +137,6 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-
 ## 🙏 Acknowledgements
 
 - [Next.js](https://nextjs.org/) for the amazing React framework
@@ -149,4 +149,3 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 ---
 
 Built By Hasan
-
