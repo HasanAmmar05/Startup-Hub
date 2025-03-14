@@ -27,7 +27,7 @@ StartupHub is a dynamic platform where entrepreneurs can showcase their startups
 
 ## 🛠️ Tech Stack
 
-- **Frontend**: Next.js 14, React, TypeScript, Tailwind CSS
+- **Frontend**: Next.js 15, React, TypeScript, Tailwind CSS
 - **Backend**: Next.js API Routes, Sanity CMS
 - **Authentication**: NextAuth.js with GitHub provider
 - **Styling**: Tailwind CSS, Shadcn UI components
@@ -37,8 +37,8 @@ StartupHub is a dynamic platform where entrepreneurs can showcase their startups
 ## 📸 Screenshots
 
 <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-  <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80" alt="Home Page" width="400"/>
-  <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=1470&q=80" alt="Startup Details" width="400"/>
+  <img src="./Screenshot 2025-03-14 120904.png" alt="Home Page" width="400"/>
+  <img src="./Screenshot 2025-03-14 120912.png" alt="Startup Details" width="400"/>
 </div>
 
 ## 🚀 Getting Started
