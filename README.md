@@ -38,7 +38,7 @@ StartupHub is a dynamic platform where entrepreneurs can showcase their startups
 
 <div style="display: flex; gap: 10px; flex-wrap: wrap;">
   <img src="./Screenshot 2025-03-14 120904.png" alt="Home Page" width="400"/>
-  <img src="./Screenshot 2025-03-14 120912.png" alt="Startup Details" width="400"/>
+  <img src="./image.png" alt="Startup Details" width="400"/>
 </div>
 
 ## 🚀 Getting Started
